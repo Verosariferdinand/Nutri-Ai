@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Makanan - Nutri AI</title>
+
+    <!-- CSS kustom -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='input_makanan.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="input-form-container">
+            <h2>Input Makanan</h2>
+
+            <!-- ========================= FORM ========================= -->
+            <form id="input-form">
+                <div class="form-row">
+
+                    <!-- ===================== NAMA MAKANAN + SEARCH ===================== -->
+                    <div class="form-group food-search-wrapper">
+                        <label for="nama_makanan">Nama Makanan:</label>
+                        <input  type="text"
+                                id="nama_makanan"
+                                name="nama_makanan"
+                                placeholder="Ketik atau pilih makanan..."
+                                autocomplete="off"
+                                required>
+                        <!-- hasil pencarian muncul di sini -->
+                        <div id="search-results" class="search-results"></div>
+                    </div>
+
+                    <!-- PORSI -->
+                    <div class="form-group">
+                        <label for="porsi">Porsi:</label>
+                        <input type="number" id="porsi" name="porsi"
+                               placeholder="Jumlah porsi" required>
+                    </div>
+
+                    <!-- WAKTU MAKAN -->
+                    <div class="form-group waktu-makan">
+                        <label for="waktu_makan">Waktu Makan:</label>
+                        <select name="waktu_makan" id="waktu_makan" required>
+                            <option value="Pagi">Pagi</option>
+                            <option value="Siang">Siang</option>
+                            <option value="Sore">Sore</option>
+                            <option value="Malam">Malam</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ========== RINCIAN MAKANAN YANG DIKLIK / DIPILIH ========== -->
+                <div class="food-details">
+                    <div id="food-image-container" class="food-image-container">
+                        <img id="food-image" src="" alt="Food Image">
+                    </div>
+                    <p id="food-name"></p>
+                    <p id="food-protein"></p>
+                    <p id="food-kalori"></p>
+                </div>
+
+                <!-- ========== TABEL KERANJANG ========== -->
+                <div class="keranjang" id="keranjang">
+                    <h3>Keranjang Makanan</h3>
+                    <table id="keranjang-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Makanan</th>
+                                <th>Porsi</th>
+                                <th>Protein</th>
+                                <th>Kalori</th>
+                            </tr>
+                        </thead>
+                        <tbody id="keranjang-list"></tbody>
+                    </table>
+                </div>
+
+                <!-- tombol -->
+                <button type="button" id="addToCartBtn" class="submit-btn">Tambah ke Keranjang</button>
+            </form>
+
+            <button type="button" id="submitToDashboardBtn" class="submit-btn">Submit ke Dashboard</button>
+        </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <script>
+        /* ---------- DATA ---------- */
+        const foodsData     = {{ foods_data | tojson }};
+        const baseImageUrl  = "{{ url_for('uploaded_file', filename='') }}";
+
+        /* ---------- Elemen Utama ---------- */
+        const namaInput     = document.getElementById('nama_makanan');
+        const searchBox     = document.getElementById('search-results');
+        const foodImage     = document.getElementById('food-image');
+        const foodNameP     = document.getElementById('food-name');
+        const foodProteinP  = document.getElementById('food-protein');
+        const foodKaloriP   = document.getElementById('food-kalori');
+        const porsiInput    = document.getElementById('porsi');
+        const waktuSelect   = document.getElementById('waktu_makan');
+        const keranjangList = document.getElementById('keranjang-list');
+
+        /* ---------- UTIL ---------- */
+        function formatProtein(g){ return `${g} g`; }
+        function formatKalori(k){ return `${k} kcal`; }
+
+        /* ---------- RENDER HASIL PENCARIAN ---------- */
+        function renderSearchResults(keyword){
+            searchBox.innerHTML = '';
+            if(!keyword){ searchBox.style.display='none'; return; }
+
+            const results = foodsData.filter(f =>
+                f.nama_makanan.toLowerCase().includes(keyword.toLowerCase())
+            );
+
+            if(results.length === 0){ searchBox.style.display='none'; return; }
+
+            results.forEach(food => {
+                const card = document.createElement('div');
+                card.className = 'food-card';
+                card.innerHTML = `
+                    <img src="${baseImageUrl}${food.image}" alt="">
+                    <span>${food.nama_makanan}</span>
+                `;
+                card.onclick = () => selectFood(food);
+                searchBox.appendChild(card);
+            });
+
+            searchBox.style.display='block';
+        }
+
+        /* ---------- PILIH MAKANAN DARI CARD ---------- */
+        function selectFood(food){
+            namaInput.value           = food.nama_makanan;
+            foodImage.src             = baseImageUrl + food.image;
+            foodImage.style.display   = 'block';
+            foodNameP.textContent     = food.nama_makanan;
+            foodProteinP.textContent  = 'Protein: ' + formatProtein(food.protein);
+            foodKaloriP.textContent   = 'Kalori: '  + formatKalori(food.kalori);
+            searchBox.style.display   = 'none';
+        }
+
+        /* ---------- EVENT: KETIK NAMA ---------- */
+        namaInput.addEventListener('input', e => {
+            const val  = e.target.value;
+            renderSearchResults(val);
+
+            /* jika mengetik nama persis, tampil rincian otomatis */
+            const food = foodsData.find(f => f.nama_makanan === val);
+            if(food){ selectFood(food); }
+        });
+
+        /* ---------- TUTUP LIST JIKA KLIK DI LUAR ---------- */
+        document.addEventListener('click', e =>{
+            if(!e.target.closest('.food-search-wrapper')){
+                searchBox.style.display='none';
+            }
+        });
+
+        /* ---------- TOMBOL TAMBAH KE KERANJANG ---------- */
+        document.getElementById('addToCartBtn').onclick = () =>{
+            const namaMakanan = namaInput.value;
+            const porsi       = parseInt(porsiInput.value);
+            const waktuMakan  = waktuSelect.value;
+            const food        = foodsData.find(f => f.nama_makanan === namaMakanan);
+
+            if(food && porsi>0){
+                const totalProtein = food.protein * porsi;
+                const totalKalori  = food.kalori  * porsi;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${baseImageUrl}${food.image}" alt="" class="thumb"> ${food.nama_makanan}</td>
+                    <td>${porsi}</td>
+                    <td>${formatProtein(totalProtein)}</td>
+                    <td>${formatKalori(totalKalori)}</td>
+                `;
+
+                tr.dataset.nama    = food.nama_makanan;
+                tr.dataset.porsi   = porsi;
+                tr.dataset.protein = totalProtein;
+                tr.dataset.kalori  = totalKalori;
+                tr.dataset.waktu   = waktuMakan;
+                tr.dataset.image   = food.image;
+
+                keranjangList.appendChild(tr);
+
+                /* reset form */
+                document.getElementById('input-form').reset();
+                foodImage.style.display='none';
+                foodNameP.textContent = foodProteinP.textContent = foodKaloriP.textContent = '';
+            }else{
+                alert('Pastikan nama makanan valid dan porsi > 0');
+            }
+        };
+
+        /* ---------- SUBMIT KE DASHBOARD ---------- */
+        document.getElementById('submitToDashboardBtn').onclick = () =>{
+            const data=[];
+            document.querySelectorAll('#keranjang-list tr').forEach(row=>{
+                data.push({
+                    nama_makanan : row.dataset.nama,
+                    porsi        : row.dataset.porsi,
+                    protein      : row.dataset.protein,
+                    kalori       : row.dataset.kalori,
+                    waktu_makan  : row.dataset.waktu,
+                    image        : row.dataset.image
+                });
+            });
+
+            if(data.length===0){ alert('Keranjang kosong'); return; }
+
+            fetch('/submit_to_dashboard',{
+                method :'POST',
+                headers:{'Content-Type':'application/json'},
+                body   :JSON.stringify(data)
+            })
+            .then(res=>res.json())
+            .then(r=>{
+                if(r.status==='success'){
+                    window.location.href = '/dashboard/{{ user.username }}';
+                }else{ alert('Gagal submit: '+r.message); }
+            })
+            .catch(err=>{
+                console.error(err);
+                alert('Terjadi kesalahan saat mengirim data');
+            });
+        };
+    </script>
+</body>
+</html>

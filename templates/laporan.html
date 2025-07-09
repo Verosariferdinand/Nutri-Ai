@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan - Nutri AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="profile">
+                <img src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Profile Picture" class="profile-pic">
+                <p class="username">{{ user.username }}</p>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard/{{ user.username }}" class="menu-item">Dashboard</a>
+                <a href="/input_makanan/{{ user.username }}" class="menu-item">Input Makanan</a>
+                <a href="/laporan/{{ user.username }}" class="menu-item active">Laporan</a>
+                <a href="/tambah_data/{{ user.username }}" class="menu-item">Tambah Data Makanan</a>
+                <a href="/logout" class="menu-item logout">Logout</a>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <header class="header">
+                <h1>Laporan Makanan</h1>
+                <p>Berikut adalah laporan makanan yang telah dikonsumsi berdasarkan waktu makan</p>
+            </header>
+
+            <!-- Tampilkan laporan per hari -->
+            <section class="report-table-container">
+                <h2>Laporan Asupan Makanan</h2>
+                {% for laporan in laporan_data %}
+                    <div class="laporan-section">
+                        <h3>Laporan Tanggal: {{ laporan.tanggal.strftime('%d-%m-%Y') }}</h3>
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Waktu Makan</th>
+                                    <th>Nama Makanan</th>
+                                    <th>Porsi</th>
+                                    <th>Protein (g)</th>
+                                    <th>Kalori (kcal)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in laporan.items %}
+                                    <tr>
+                                        <td>{{ item.waktu_makan }}</td>
+                                        <td>{{ item.food.nama_makanan }}</td>
+                                        <td>{{ item.food.porsi }}</td>
+                                        <td>{{ item.food.protein }}</td>
+                                        <td>{{ item.food.kalori }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <div class="total-stats">
+                            <p><strong>Total Protein: </strong>{{ laporan.total_protein }} g</p>
+                            <p><strong>Total Kalori: </strong>{{ laporan.total_kalori }} kcal</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </section>
+        </div>
+    </div>
+</body>
+</html>

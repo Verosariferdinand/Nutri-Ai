@@ -1,0 +1,158 @@
+/* Register Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 700px;
+    max-height: 545px; /* Membatasi tinggi container */
+    margin: 20px auto;
+    background-color: #f7f7f7;
+    padding: 20px;
+}
+
+.register-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 22px;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    width: 48%;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Button styling */
+button.register-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button.register-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Styling for Morph Body Types */
+.morph-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.morph-option {
+    text-align: center;
+    flex-basis: 30%;
+}
+
+.morph-image {
+    width: 50px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.morph-image:hover {
+    transform: scale(1.1);
+}
+
+.morph-option p {
+    font-size: 12px;
+    color: #333;
+    margin-top: 5px;
+}
+
+.morph-option label {
+    cursor: pointer;
+}
+
+/* Styling for "Already Have an Account?" */
+.login-link {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.login-link a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsiveness - Adjust for mobile devices */
+@media (max-width: 768px) {
+    .register-box {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .morph-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .morph-image {
+        width: 40px;
+        height: 70px;
+    }
+
+    .morph-option p {
+        font-size: 10px;
+    }
+}

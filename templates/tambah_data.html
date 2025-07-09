@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Data Makanan - Nutri AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='tambah_data.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="input-form-container">
+            <h2>Tambah Data Makanan</h2>
+            <form id="food-form" action="/tambah_data/{{ user.username }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="nama_makanan">Nama Makanan:</label>
+                    <input type="text" id="nama_makanan" name="nama_makanan" placeholder="Masukkan nama makanan" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="kalori">Kalori (per porsi):</label>
+                    <input type="number" id="kalori" name="kalori" placeholder="Masukkan jumlah kalori" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="protein">Protein (per porsi):</label>
+                    <input type="number" id="protein" name="protein" placeholder="Masukkan jumlah protein" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="food_image">Foto Makanan:</label>
+                    <input type="file" id="food_image" name="food_image" accept="image/*" required>
+                </div>
+
+                 <!-- Preview + Crop berdampingan -->
+                <div class="preview-crop-wrapper">
+                    <div id="preview-container" class="preview-container">
+                        <img id="preview" src="" alt="Preview" style="display:none;">
+                    </div>
+                    <div id="crop-container" class="crop-container">
+                        <img id="cropper-image" src="" alt="Crop" style="display:none;">
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Tambah Makanan</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        let cropper;
+        const previewImage = document.getElementById('preview');
+        const cropperImage = document.getElementById('cropper-image');
+
+        // Mengambil gambar yang diupload dan mempersiapkannya untuk dipotong
+        document.getElementById('food_image').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+
+                // Memulai cropper dengan gambar yang dipilih
+                cropperImage.src = e.target.result;
+                cropperImage.style.display = 'block';
+                
+                // Memulai cropper dengan opsi pemotongan
+                cropper = new Cropper(cropperImage, {
+                    aspectRatio: 1,  // Potong dengan rasio 1:1 (persegi)
+                    viewMode: 1,
+                    autoCropArea: 1,
+                    cropBoxResizable: false,
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Saat formulir disubmit, potong gambar dan kirimkan ke backend
+        document.querySelector('form').onsubmit = function(event) {
+            if (cropper) {
+                var croppedCanvas = cropper.getCroppedCanvas({
+                    width: 30,  // Potong gambar menjadi ukuran 30x30 px
+                    height: 30
+                });
+                croppedCanvas.toBlob(function(blob) {
+                    var formData = new FormData();
+                    formData.append("food_image", blob);
+
+                    // Kirimkan data formulir dan gambar yang telah dipotong ke backend
+                    fetch('/tambah_data/{{ user.username }}', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        window.location.href = '/input_makanan/{{ user.username }}';  // Arahkan ke halaman input makanan setelah berhasil
+                    })
+                    .catch(error => {
+                        console.error('Terjadi kesalahan:', error);
+                    });
+                    event.preventDefault();  // Cegah pengiriman formulir secara default
+                });
+            }
+        };
+    </script>
+</body>
+</html>

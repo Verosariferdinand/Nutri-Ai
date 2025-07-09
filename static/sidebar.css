@@ -1,0 +1,129 @@
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;  /* Ukuran sidebar */
+    height: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 100;  /* Pastikan sidebar selalu di atas konten */
+}
+
+.sidebar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.sidebar .username {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.sidebar .menu {
+    margin-top: 20px;
+}
+
+/* Styling untuk menu sidebar */
+.sidebar .menu-item {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.sidebar .menu-item:hover {
+    color: #007bff;
+}
+
+.sidebar .btn-profile {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.sidebar .logout {
+    color: red;
+}
+
+/* Buat konten utama berada di sebelah kanan sidebar */
+.main-content {
+    margin-left: 240px; /* Memberikan ruang untuk sidebar */
+    margin-right: -50px;
+    margin-top: -20px;
+    padding: 20px;
+    background-color: #fff;
+    flex-grow: 1;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.username {
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.menu {
+    margin-top: 20px;
+}
+
+.menu-item {
+    display: block;
+    padding: 10px;
+    background-color: #ff0095;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.menu-item:hover {
+    background-color: #80d1f1;
+}
+
+.btn-profile {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    color: white;
+    background-color: #28a745;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn-profile:hover {
+    background-color: #218838;
+}
+
+/* Menambahkan Media Query untuk layar kecil */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Sidebar mengisi lebar layar */
+        position: relative; /* Tidak fixed lagi */
+        height: auto; /* Tidak 100% */
+        margin-bottom: 10px;
+    }
+
+    .sidebar .menu-item {
+        text-align: center;
+    }
+
+    /* Menyesuaikan isi sidebar */
+    .sidebar img {
+        width: 40px;
+        height: 40px;
+    }
+}
+

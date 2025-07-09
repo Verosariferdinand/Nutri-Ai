@@ -1,0 +1,91 @@
+ <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Nutri AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+</head>
+<body>
+<div class="container">
+
+    <!-- =========== SIDEBAR =========== -->
+    {% include 'sidebar.html' %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>Profil Pengguna</h1>
+    </div>
+    <div class="profile-body">
+         <div class="profile-picture">
+            {% if user.profile_picture %}
+                <!-- Jika ada foto profil, tampilkan gambar yang di-upload -->
+                <img id="profile-pic" src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Profile" class="profile-img">
+            {% else %}
+                <!-- Jika tidak ada foto, tampilkan gambar default -->
+                <img id="profile-pic" src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Profile" class="profile-img">
+            {% endif %}
+            <!-- Ikon kamera untuk mengedit foto profil, tampilkan selalu -->
+            <label for="file-upload" class="edit-icon">
+                <i class="fas fa-camera camera-icon"></i>
+            </label>
+            <input type="file" id="file-upload" style="display: none;" onchange="uploadProfilePicture(event)">
+            <p class="username">{{ user.username }}</p>
+        </div>
+        <div class="profile-info">
+            <p><strong>Umur:</strong> {{ user.umur }} tahun</p>
+            <p><strong>Gender:</strong> {{ user.gender }}</p>
+            <p><strong>Tinggi Badan:</strong> {{ user.tb }} cm</p>
+            <p><strong>Berat Badan:</strong> {{ user.bb }} kg</p>
+            <p><strong>Tujuan Diet:</strong> {{ user.tujuan }}</p>
+            <p><strong>Aktivitas Harian:</strong> {{ user.aktivitas }}</p>
+            <p><strong>Tipe Tubuh:</strong> {{ user.tipe_tubuh }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<script>
+    // Fungsi untuk upload atau edit foto profil
+    function uploadProfilePicture(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('profile_picture', file);
+
+        fetch('/update_profile_picture', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Menambahkan query string (timestamp) untuk menghindari cache
+                const newProfilePicUrl = data.profile_picture_url + '?t=' + new Date().getTime();
+                // Update gambar profil di halaman tanpa reload
+                document.getElementById('profile-pic').src = newProfilePicUrl;
+                
+                // Update gambar profil di sidebar
+                    const sidebarProfilePic = document.querySelector('.sidebar-profile-img');
+                    if (sidebarProfilePic) {
+                        sidebarProfilePic.src = newProfilePicUrl;
+                    }
+
+            } else {
+                alert('Gagal meng-upload foto profil.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat meng-upload foto profil.');
+        });
+    }
+}
+</script>
+</body>
+</html>

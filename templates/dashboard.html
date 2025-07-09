@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Nutri AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+</head>
+<body>
+<div class="container">
+
+    <!-- =========== SIDEBAR =========== -->
+    {% include 'sidebar.html' %}
+
+    <!-- =========== MAIN CONTENT =========== -->
+    <div class="main-content">
+
+        <!-- Header -->
+        <header class="header">
+            <h1>Hello, {{ user.username }}</h1>
+            <p><strong>Target: {{ user.tujuan }}</strong></p>
+            <div class="bmr-tdee-info">
+                <p><strong>BMR (Basal Metabolic Rate):</strong> {{ user.bmr|round(0)|int | format_number }} kcal/hari</p>
+                <p class="info-text">BMR adalah jumlah kalori yang dibutuhkan tubuh Anda untuk menjalankan fungsi dasar tubuh seperti bernapas dan mempertahankan suhu tubuh, tanpa aktivitas fisik.</p>
+
+                <p><strong>TDEE (Total Daily Energy Expenditure):</strong> {{ user.tdee|round(0)|int | format_number }} kcal/hari</p>
+                <p class="info-text">TDEE adalah total kalori yang dibakar tubuh Anda dalam sehari, termasuk kalori yang dibakar selama aktivitas fisik.</p>
+
+                <p><strong>Target Kalori Harian ({{ user.tujuan }}):</strong> {{ "{:,.0f}".format(target_calories) }} kcal/hari</p>
+                <p class="info-text">Target kalori yang perlu Anda konsumsi untuk mencapai tujuan Anda.</p>
+
+                <p><strong>Target Protein Harian ({{ user.tujuan }}):</strong> {{ "{:,.0f}".format(target_protein) }} g/hari</p>
+                <p class="info-text">Target protein harian yang diperlukan untuk mendukung tujuan Anda.</p>
+            </div>
+
+            <!-- Progress Bar untuk Kalori -->
+            <div class="progress-container">
+                <h3>Progress Kalori</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ progress_calories }}%; background-color: {{ 'green' if progress_calories >= 100 else 'orange' }};">
+                        <span class="progress-text">{{ progress_calories | round(1) }}%</span>
+                    </div>
+                </div>
+                <p>{{ target_status_calories }}</p>
+            </div>
+
+            <!-- Progress Bar untuk Protein -->
+            <div class="progress-container">
+                <h3>Progress Protein</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ progress_protein }}%; background-color: {{ 'green' if progress_protein >= 100 else 'orange' }};">
+                        <span class="progress-text">{{ progress_protein | round(1) }}%</span>
+                    </div>
+                </div>
+                <p>{{ target_status_protein }}</p>
+            </div>
+        </header>
+
+        <!-- Rincian per waktu makan -->
+        <section class="food-list">
+            <h2>Makanan Hari Ini :</h2>
+
+            {% if not (makanan_pagi or makanan_siang or makanan_sore or makanan_malam) %}
+                <!-- Jika tidak ada makanan sama sekali -->
+                <p>Anda belum makan apa-apa hari ini, klik Input Makanan.</p>
+            {% else %}
+                {% if makanan_pagi %}
+                    <h3 style="margin-top: 20px;">Waktu Makan - Pagi</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Makanan</th>
+                                <th>Porsi</th>
+                                <th>Protein</th>
+                                <th>Kalori</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for food in makanan_pagi %}
+                            <tr>
+                                <td style="text-align: center; display: flex; flex-direction: row; justify-content: center; align-items: center;"> 
+                                    <img src="{{ url_for('uploaded_file', filename=food.food.image) }}" alt="Food Image" style="max-width: 90px; max-height: 90px;">
+                                    <span>{{ food.food.nama_makanan }}</span>
+                                </td>
+                                <td>{{ food.food.porsi }}</td>
+                                <td>{{ food.food.protein }}g</td>
+                                <td>{{ food.food.kalori }} kcal</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p><strong>Total Protein Pagi:</strong> {{ total_protein_pagi }}g</p>
+                    <p><strong>Total Kalori Pagi:</strong> {{ total_kalori_pagi }} kcal</p>
+                {% endif %}
+
+                {% if makanan_siang %}
+                    <h3 style="margin-top: 20px;">Waktu Makan - Siang</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Makanan</th>
+                                <th>Porsi</th>
+                                <th>Protein</th>
+                                <th>Kalori</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for food in makanan_siang %}
+                            <tr>
+                                <td style="text-align: center; display: flex; flex-direction: row; justify-content: center; align-items: center;"> 
+                                    <img src="{{ url_for('uploaded_file', filename=food.food.image) }}" alt="Food Image" style="max-width: 90px; max-height: 90px;">
+                                    <span>{{ food.food.nama_makanan }}</span>
+                                </td>
+                                <td>{{ food.food.porsi }}</td>
+                                <td>{{ food.food.protein }}g</td>
+                                <td>{{ food.food.kalori }} kcal</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p><strong>Total Protein Siang:</strong> {{ total_protein_siang }}g</p>
+                    <p><strong>Total Kalori Siang:</strong> {{ total_kalori_siang }} kcal</p>
+                {% endif %}
+
+                {% if makanan_sore %}
+                    <h3 style="margin-top: 20px;">Waktu Makan - Sore</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Makanan</th>
+                                <th>Porsi</th>
+                                <th>Protein</th>
+                                <th>Kalori</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for food in makanan_sore %}
+                            <tr>
+                                <td style="text-align: center; display: flex; flex-direction: row; justify-content: center; align-items: center;"> 
+                                    <img src="{{ url_for('uploaded_file', filename=food.food.image) }}" alt="Food Image" style="max-width: 90px; max-height: 90px;">
+                                    <span>{{ food.food.nama_makanan }}</span>
+                                </td>
+                                <td>{{ food.food.porsi }}</td>
+                                <td>{{ food.food.protein }}g</td>
+                                <td>{{ food.food.kalori }} kcal</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p><strong>Total Protein Sore:</strong> {{ total_protein_sore }}g</p>
+                    <p><strong>Total Kalori Sore:</strong> {{ total_kalori_sore }} kcal</p>
+                {% endif %}
+
+                {% if makanan_malam %}
+                    <h3 style="margin-top: 20px;">Waktu Makan - Malam</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Makanan</th>
+                                <th>Porsi</th>
+                                <th>Protein</th>
+                                <th>Kalori</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for food in makanan_malam %}
+                            <tr>
+                                <td style="text-align: center; display: flex; flex-direction: row; justify-content: center; align-items: center;"> 
+                                    <img src="{{ url_for('uploaded_file', filename=food.food.image) }}" alt="Food Image" style="max-width: 90px; max-height: 90px;">
+                                    <span>{{ food.food.nama_makanan }}</span>
+                                </td>
+                                <td>{{ food.food.porsi }}</td>
+                                <td>{{ food.food.protein }}g</td>
+                                <td>{{ food.food.kalori }} kcal</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p><strong>Total Protein Malam:</strong> {{ total_protein_malam }}g</p>
+                    <p><strong>Total Kalori Malam:</strong> {{ total_kalori_malam }} kcal</p>
+                {% endif %}
+            {% endif %}
+        </section>
+    </div>
+</div>
+</body>
+</html>

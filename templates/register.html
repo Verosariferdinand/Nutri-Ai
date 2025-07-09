@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Nutri AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-box">
+            <h2>Daftar Nutri AI</h2>
+            <form action="/register" method="POST">
+                <div class="form-row">
+                    <div class="form-group left-column">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" placeholder="Masukkan username" required>
+                    </div>
+
+                    <div class="form-group right-column">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group left-column">
+                        <label for="umur">Umur:</label>
+                        <input type="number" id="umur" name="umur" placeholder="Masukkan umur" required>
+                    </div>
+
+                    <div class="form-group right-column">
+                        <label for="tb">Tinggi Badan (cm):</label>
+                        <input type="number" id="tb" name="tb" placeholder="Masukkan tinggi badan" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group left-column">
+                        <label for="bb">Berat Badan (kg):</label>
+                        <input type="number" id="bb" name="bb" placeholder="Masukkan berat badan" required>
+                    </div>
+
+                    <div class="form-group right-column">
+                        <label for="tujuan">Tujuan Diet:</label>
+                        <select id="tujuan" name="tujuan" required>
+                            <option value="bulking">Bulking</option>
+                            <option value="cutting">Cutting</option>
+                            <option value="maintain">Maintain</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group left-column">
+                        <label>Aktivitas Harian:</label>
+                        <select id="aktivitas-harian" name="aktivitas" required>
+                            <option value="sangat_tidak_aktif">Sedentary - Sangat Tidak Aktif</option>
+                            <option value="aktivitas_ringan">Light - Aktivitas Ringan</option>
+                            <option value="aktivitas_sedang">Moderate - Aktivitas Sedang</option>
+                            <option value="aktivitas_berat">Intense - Aktivitas Berat</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group right-column">
+                        <label for="gender">Gender:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="laki_laki">Laki-Laki</option>
+                            <option value="perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="morph-container">
+                    <div class="morph-option">
+                        <input type="radio" id="ectomorph" name="body_type" value="ectomorph" required>
+                        <label for="ectomorph">
+                            <img src="{{ url_for('static', filename='images/ectomorph.png') }}" class="morph-image" alt="Ectomorph">
+                        </label>
+                        <p>Ectomorph</p>
+                        <p>(Tubuh ramping, sulit menambah berat badan)</p>
+                    </div>
+
+                    <div class="morph-option">
+                        <input type="radio" id="mesomorph" name="body_type" value="mesomorph">
+                        <label for="mesomorph">
+                            <img src="{{ url_for('static', filename='images/mesomorph.png') }}" class="morph-image" alt="Mesomorph">
+                        </label>
+                        <p>Mesomorph</p>
+                        <p>(Tubuh atletis, mudah menambah otot)</p>
+                    </div>
+
+                    <div class="morph-option">
+                        <input type="radio" id="endomorph" name="body_type" value="endomorph">
+                        <label for="endomorph">
+                            <img src="{{ url_for('static', filename='images/endomorph.png') }}" class="morph-image" alt="Endomorph">
+                        </label>
+                        <p>Endomorph</p>
+                        <p>(Tubuh lebih berisi, mudah menambah lemak)</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="register-btn">Daftar</button>
+            </form>
+
+            <p class="login-link">Sudah punya akun? <a href="/login">Login Sekarang</a></p>
+        </div>
+    </div>
+</body>
+</html>

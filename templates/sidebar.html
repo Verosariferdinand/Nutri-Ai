@@ -1,0 +1,60 @@
+<div class="sidebar">
+        <div class="profile">
+        <!-- Menampilkan foto profil -->
+        {% if user.profile_picture %}
+            <!-- Jika ada, tampilkan foto profil yang di-upload -->
+            <img id="profile-pic" src="{{ url_for('uploaded_file', filename=user.profile_picture) }}" alt="Profile" class="profile-pic" style="width: 50px; height: 50px; border-radius: 50%;">
+        {% else %}
+            <!-- Jika tidak ada, tampilkan gambar default -->
+            <img id="profile-pic" src="{{ url_for('static', filename='images/default_profile.png') }}" alt="Profile" class="profile-pic" style="width: 50px; height: 50px; border-radius: 50%;">
+        {% endif %}
+        <p class="username">{{ user.username }}</p>
+         <!-- Menampilkan ikon + dan teks Upload Foto Profil Anda di samping -->
+        <div class="upload-container">
+            <label for="profile-upload" class="upload-icon">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </label>
+            <span>Upload Foto Profil Anda</span>
+            <input type="file" id="profile-upload" style="display: none;" accept="image/*" onchange="uploadProfilePicture(event)">
+        </div>
+        
+        </div>
+        <nav class="menu">
+            <a href="/dashboard/{{ user.username }}"          class="menu-item">Dashboard</a>
+            <a href="/input_makanan/{{ user.username }}"      class="menu-item">Input Makanan</a>
+            <a href="/laporan/{{ user.username }}"            class="menu-item">Laporan</a>
+            <a href="/tambah_data/{{ user.username }}"        class="menu-item">Tambah Data Makanan</a>
+            <a href="{{ url_for('profile', username=user.username) }}" class="menu-item">Lihat Profil</a>
+            <a href="/logout"                                 class="menu-item">Logout</a>
+
+        </nav>
+    </div>
+
+    <!-- JavaScript untuk meng-upload foto profil -->
+    <script>
+        function uploadProfilePicture(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('profile_picture', file);
+
+                fetch('/update_profile_picture', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update gambar profil di halaman tanpa reload
+                        document.getElementById('profile-pic').src = data.profile_picture_url;
+                    } else {
+                        alert('Gagal meng-upload foto profil.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat meng-upload foto profil.');
+                });
+            }
+        }
+    </script>

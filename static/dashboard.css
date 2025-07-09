@@ -1,0 +1,169 @@
+/* Dashboard Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Atur layout container untuk sidebar dan content */
+.container {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0 auto;
+    max-width: 1250px;
+    padding: 20px;
+    min-height: 100vh;  
+    flex-wrap: wrap;
+}
+
+/* Main Content */
+.main-content {
+    width: 100%;
+    margin-left: 250px;
+    margin-top: -20px;
+    margin-right: -50px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    flex-grow: 1;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.bmr-tdee-info p {
+    font-size: 16px;
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+/* Text info for BMR, TDEE, and Target values */
+.info-text {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Container untuk progress bar */
+.progress-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Desain progress bar */
+.progress-bar {
+    width: 100%;
+    height: 30px;
+    background-color: #e0e0e0;
+    border-radius: 30px;
+    position: relative;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: width 0.5s ease-in-out;
+    color: white;
+    font-weight: bold;
+    border-radius: 30px;
+    text-align: center;
+}
+
+.progress-text {
+    position: absolute;
+    font-size: 1.2em;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.progress-container h3 {
+    font-size: 1.2em;
+    color: #34495E;
+}
+
+.progress-container p {
+    color: #34495E;
+    font-size: 1em;
+}
+
+/* Warna berdasarkan progress */
+.progress-bar .progress-fill {
+    background-color: #f39c12; /* Warna default */
+}
+
+.progress-bar .progress-fill[data-progress='100'] {
+    background-color: green;
+}
+
+.stats-section {
+    margin-top: 20px;
+}
+
+/* Buat chart lebih rapi */
+.chart-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+
+.food-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.food-list table th, .food-list table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.food-list table th {
+    background-color: #1e2a47;
+    color: white;
+}
+
+.food-list table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Stat chart styles */
+.chart-container {
+    width: 100%;
+    height: 300px;
+    margin: 0 auto;
+}
+
+.total-stats {
+    font-size: 1.2em;
+    color: #34495E;
+}
+
+/* Responsiveness - Mobile & Tablet */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Menumpuk sidebar dan content secara vertikal */
+        align-items: center; /* Menyusun konten di tengah */
+    }
+
+    .main-content {
+        margin-left: 0; /* Hapus margin kiri */
+        margin-right: 0; /* Hapus margin kanan */
+        margin-top: 0; /* Hapus margin atas */
+        padding: 15px; /* Sesuaikan padding */
+        width: 100%; /* Main content mengambil seluruh lebar */
+    }
+}
+
+
